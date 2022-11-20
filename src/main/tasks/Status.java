@@ -1,4 +1,4 @@
-package main.status;
+package main.tasks;
 
 
 public enum Status {

@@ -1,5 +1,4 @@
 package main.tasks;
-import main.status.Status;
 
 import java.util.Objects;
 
@@ -10,17 +9,16 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public Task(String title, String description, int id, Status status) {
-        this.title = title;
-        this.description = description;
-        this.id = id;
-        this.status = status;
-    }
 
     public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
+    }
+
+    public Task(String title, String description) {
+        this.title = title;
+        this.description = description;
     }
 
     public String getTitle() {

@@ -1,13 +1,13 @@
 package main.tasks;
-import main.status.Status;
 
 import java.util.Objects;
 
 public class SubTask extends Task {
     public int epicId;
 
-    public SubTask(String title, String description, int id, Status status) {
-        super(title, description, id, status);
+    public SubTask(String title, String description, Status status, int epicId) {
+        super(title, description, status);
+        this.epicId = epicId;
 
     }
 

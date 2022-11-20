@@ -1,7 +1,7 @@
 package main.manager;
 
 import java.util.*;
-import main.status.Status;
+
 import main.tasks.*;
 
 
@@ -11,26 +11,26 @@ public class Manager {
     protected HashMap<Integer, Epic> epicsMap = new HashMap<>();
     protected HashMap<Integer, SubTask> subTasksMap = new HashMap<>();
 
-    public int addNewTask(Task task) {
+    public void addNewTask(Task task) {
         task.setId(nextId++);
         tasksMap.put(task.getId(), task);
-        return task.getId();
     }
 
-    public int addNewEpic(Epic epic) {
+
+    public void addNewEpic(Epic epic) {
         epic.setId(nextId++);
         epicsMap.put(epic.getId(), epic);
 
-        for (int itemId : epic.getSubTaskIds()) {
-            subTasksMap.get(itemId).setEpicId(epic.getId());
-        }
-        return epic.getId();
+        updateEpicStatus(epic.getId());
+
     }
 
-    public int addSubTask(SubTask subTask) {
+
+    public void addSubTask(SubTask subTask) {
         subTask.setId(nextId++);
         subTasksMap.put(subTask.getId(), subTask);
-        return subTask.getId();
+        epicsMap.get(subTask.epicId).addSubTaskId(subTask.getId());
+        updateEpicStatus(subTask.getEpicId());
     }
 
     public Task getTaskById(int taskId) {
@@ -44,36 +44,43 @@ public class Manager {
     public SubTask getSubTaskById(int subTaskId) {
         return subTasksMap.get(subTaskId);
     }
-    //если честно, то не очень понял на счет метода Update. На вебинаре нам рассказывали, что мы создаем новый объект
-    //и укладываем его на вместо старого на его id. Буду благодарен, если расскажете про это
+
+
     public void updateTask(Task task, int taskId) {
         if (tasksMap.containsKey(taskId)) {
             tasksMap.put(taskId, task);
-        } else {
-            System.out.println("Такой задачи не существует");
         }
-
     }
 
-    public void updateEpic(Epic epic, int epicId) {
-        if (epicsMap.containsKey(epicId)) {
-            epicsMap.put(epicId, epic);
-        } else {
-            System.out.println("Такого эпика не существует");
-        }
-
+    public ArrayList<Task> getAllTasks() {
+        return new ArrayList<>(tasksMap.values());
     }
 
-    public void updateSubTask(SubTask subTask, int subId) {
+
+    public ArrayList<Epic> getAllEpics() {
+        return new ArrayList<>(epicsMap.values());
+    }
+
+
+    public ArrayList<SubTask> getAllSubtasks() {
+        return new ArrayList<>(subTasksMap.values());
+    }
+
+
+    public void updateEpic(Epic epic) {
+        if (epicsMap.containsKey(epic.getId())) {
+            epicsMap.put(epic.getId(), epic);
+        }
+        updateEpicStatus(epic.getId());
+    }
+
+    public void updateSubTask(SubTask subTask) {
         int epicId = 0;
-        if (subTasksMap.containsKey(subId)) {
-            epicId = subTasksMap.get(subId).getEpicId();
-            subTasksMap.put(subId, subTask);
+        if (subTasksMap.containsKey(subTask.getId())) {
+            epicId = subTasksMap.get(subTask.getId()).getEpicId();
+            subTasksMap.put(subTask.getId(), subTask);
             updateEpicStatus(epicId);
-        } else {
-            System.out.println("Такого сабтаска не существует");
         }
-
     }
 
 
@@ -94,7 +101,12 @@ public class Manager {
     }
 
     public void deleteEpic(int epicId) {
+        ArrayList<Integer> subTaskIds = epicsMap.get(epicId).getSubTaskIds();
         epicsMap.remove(epicId);
+
+        for (Integer subId : subTaskIds) {
+            subTasksMap.remove(subId);
+        }
     }
 
     public void deleteTask(int taskId) {
@@ -104,7 +116,7 @@ public class Manager {
         } else if (subTasksMap.containsKey(taskId)) {
             int epicId = subTasksMap.get(taskId).getEpicId();
             subTasksMap.remove(taskId);
-            updateEpicStatus(epicId);//если удаляется сабтаска, то пересчитывается статус эпика
+            updateEpicStatus(epicId);
         } else tasksMap.remove(taskId);
     }
 
@@ -120,7 +132,7 @@ public class Manager {
     }
 
 
-    private void updateEpicStatus(int epicId) {
+    public void updateEpicStatus(int epicId) {
         int statusNew = 0;
         int statusDone = 0;
         Status value;
@@ -128,7 +140,7 @@ public class Manager {
             epicsMap.get(epicId).setStatus(Status.NEW);
         } else {
             for (int sub : epicsMap.get(epicId).getSubTaskIds()) {
-                value = epicsMap.get(sub).getStatus();
+                value = subTasksMap.get(sub).getStatus();
                 if (value == Status.NEW) {
                     statusNew++;
                 }
@@ -145,5 +157,4 @@ public class Manager {
             }
         }
     }
-
 }

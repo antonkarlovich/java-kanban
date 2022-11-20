@@ -3,14 +3,12 @@ package main.tasks;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import main.status.Status;
-
 public class Epic extends Task {
 
     protected ArrayList<Integer> subTaskIds = new ArrayList<>();
 
-    public Epic(String title, String description, int id, Status status) {
-        super(title, description, id, status);
+    public Epic(String title, String description) {
+        super(title, description);
     }
 
 
