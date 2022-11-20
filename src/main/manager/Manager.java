@@ -92,6 +92,7 @@ public class Manager {
     public void deleteAllSubTasks() {
         for (Epic epic : epicsMap.values()) {
             epic.getSubTaskIds().clear();
+            epic.setStatus(Status.NEW);
         }
         subTasksMap.clear();
     }
@@ -132,30 +133,29 @@ public class Manager {
         return subTasks;
     }
 
-    //да, он был приватным)) он работал как то странно, поэтому я его пробовал тестить в манагере,
-    // а потом забыл поменять модификатор доступа
+
     private void updateEpicStatus(int epicId) {
         int statusNew = 0;
         int statusDone = 0;
-        Status value;
+
         if (epicsMap.get(epicId).getSubTaskIds().isEmpty()) {
             epicsMap.get(epicId).setStatus(Status.NEW);
         } else {
             for (int sub : epicsMap.get(epicId).getSubTaskIds()) {
-                value = subTasksMap.get(sub).getStatus();
-                if (value == Status.NEW) {
+                ;
+                if (subTasksMap.get(sub).getStatus() == Status.NEW) {
                     statusNew++;
                 }
-                if (value == Status.DONE) {
+                if (subTasksMap.get(sub).getStatus() == Status.DONE) {
                     statusDone++;
                 }
-                if (statusNew == epicsMap.get(epicId).getSubTaskIds().size()) {
-                    epicsMap.get(epicId).setStatus(Status.NEW);
-                } else if (statusDone == epicsMap.get(epicId).getSubTaskIds().size()) {
-                    epicsMap.get(epicId).setStatus(Status.DONE);
-                } else {
-                    epicsMap.get(epicId).setStatus(Status.IN_PROGRESS);
-                }
+            }
+            if (statusNew == epicsMap.get(epicId).getSubTaskIds().size()) {
+                epicsMap.get(epicId).setStatus(Status.NEW);
+            } else if (statusDone == epicsMap.get(epicId).getSubTaskIds().size()) {
+                epicsMap.get(epicId).setStatus(Status.DONE);
+            } else {
+                epicsMap.get(epicId).setStatus(Status.IN_PROGRESS);
             }
         }
     }
