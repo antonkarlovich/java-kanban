@@ -17,12 +17,12 @@ public class Manager {
     }
 
 
-    public void addNewEpic(Epic epic) {
+    public int addNewEpic(Epic epic) {
         epic.setId(nextId++);
         epicsMap.put(epic.getId(), epic);
 
         updateEpicStatus(epic.getId());
-
+        return epic.getId();
     }
 
 
@@ -84,23 +84,23 @@ public class Manager {
     }
 
 
-    public void deleteAllEpic() {
+    public void deleteAllEpics() {
         epicsMap.clear();
         subTasksMap.clear();
     }
 
-    public void deleteAllSubTask() {
+    public void deleteAllSubTasks() {
         for (Epic epic : epicsMap.values()) {
             epic.getSubTaskIds().clear();
         }
         subTasksMap.clear();
     }
 
-    public void deleteAllTask() {
+    public void deleteAllTasks() {
         tasksMap.clear();
     }
 
-    public void deleteEpic(int epicId) {
+    public void deleteEpicById(int epicId) {
         ArrayList<Integer> subTaskIds = epicsMap.get(epicId).getSubTaskIds();
         epicsMap.remove(epicId);
 
@@ -109,16 +109,17 @@ public class Manager {
         }
     }
 
-    public void deleteTask(int taskId) {
 
-        if (epicsMap.containsKey(taskId)) {
-            epicsMap.remove(taskId);
-        } else if (subTasksMap.containsKey(taskId)) {
-            int epicId = subTasksMap.get(taskId).getEpicId();
-            subTasksMap.remove(taskId);
-            updateEpicStatus(epicId);
-        } else tasksMap.remove(taskId);
+    public void  deleteTaskById(int taskId) {
+        tasksMap.remove(taskId);
     }
+
+    public void deleteSubtaskById(int subTaskId) {
+        int epicId = subTasksMap.get(subTaskId).getEpicId();
+        subTasksMap.remove(subTaskId);
+        updateEpicStatus(epicId);
+    }
+
 
 
     public ArrayList<SubTask> getAllSubTaskForEpic(int epic) {
@@ -131,8 +132,9 @@ public class Manager {
         return subTasks;
     }
 
-
-    public void updateEpicStatus(int epicId) {
+    //да, он был приватным)) он работал как то странно, поэтому я его пробовал тестить в манагере,
+    // а потом забыл поменять модификатор доступа
+    private void updateEpicStatus(int epicId) {
         int statusNew = 0;
         int statusDone = 0;
         Status value;

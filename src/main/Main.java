@@ -1,3 +1,5 @@
+package main;
+
 import main.tasks.Status;
 import main.manager.Manager;
 import main.tasks.*;
