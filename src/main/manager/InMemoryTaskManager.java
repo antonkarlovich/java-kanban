@@ -160,6 +160,11 @@ public class InMemoryTaskManager implements TaskManager{
         return subTasks;
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
+
 
     private void updateEpicStatus(int epicId) {
         int statusNew = 0;
