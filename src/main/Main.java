@@ -63,7 +63,7 @@ public class Main {
         System.out.println(epicForRepair.getSubTaskIds());
 
         System.out.println("Выводим историю просмотров:");
-        List<Task> history = inMemoryHistoryManager.getHistory();
+        List<Task> history = taskManager.getHistory();
         for (int i = 0; i < history.size(); i++) {
             System.out.println((i + 1) + "." + history.get(i));
         }

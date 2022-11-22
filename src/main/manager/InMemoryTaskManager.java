@@ -7,7 +7,7 @@ public class InMemoryTaskManager implements TaskManager{
     private final HashMap<Integer, Task> tasksMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicsMap = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasksMap = new HashMap<>();
-    private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     @Override
@@ -39,20 +39,17 @@ public class InMemoryTaskManager implements TaskManager{
         return tasksMap.get(taskId);
     }
 
-
     @Override
     public Epic getEpicById(int epicId) {
         historyManager.add(epicsMap.get(epicId));
         return epicsMap.get(epicId);
     }
 
-
     @Override
     public SubTask getSubTaskById(int subTaskId) {
         historyManager.add(subTasksMap.get(subTaskId));
         return subTasksMap.get(subTaskId);
     }
-
 
     @Override
     public void updateTask(Task task, int taskId) {
@@ -61,27 +58,20 @@ public class InMemoryTaskManager implements TaskManager{
         }
     }
 
-
     @Override
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(tasksMap.values());
     }
-
-
 
     @Override
     public ArrayList<Epic> getAllEpics() {
         return new ArrayList<>(epicsMap.values());
     }
 
-
-
     @Override
     public ArrayList<SubTask> getAllSubtasks() {
         return new ArrayList<>(subTasksMap.values());
     }
-
-
 
     @Override
     public void updateEpic(Epic epic) {
@@ -101,13 +91,11 @@ public class InMemoryTaskManager implements TaskManager{
         }
     }
 
-
     @Override
     public void deleteAllEpics() {
         epicsMap.clear();
         subTasksMap.clear();
     }
-
 
     @Override
     public void deleteAllSubTasks() {
@@ -118,12 +106,10 @@ public class InMemoryTaskManager implements TaskManager{
         subTasksMap.clear();
     }
 
-
     @Override
     public void deleteAllTasks() {
         tasksMap.clear();
     }
-
 
     @Override
     public void deleteEpicById(int epicId) {
@@ -135,12 +121,10 @@ public class InMemoryTaskManager implements TaskManager{
         }
     }
 
-
     @Override
     public void  deleteTaskById(int taskId) {
         tasksMap.remove(taskId);
     }
-
 
     @Override
     public void deleteSubtaskById(int subTaskId) {
@@ -164,7 +148,6 @@ public class InMemoryTaskManager implements TaskManager{
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }
-
 
     private void updateEpicStatus(int epicId) {
         int statusNew = 0;
