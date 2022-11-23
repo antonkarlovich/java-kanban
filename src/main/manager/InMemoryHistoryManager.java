@@ -6,16 +6,18 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager{
     private final List<Task> historyList = new ArrayList<>();
-    int MAX_SIZE_HISTORY = 10;
+    private int MAX_SIZE_HISTORY = 10;//а его просто перенес из метода видимо)) поэтому и забыл про модификатор
 
     @Override
     public void add(Task task) {
-        if (task != null) {
-            if (historyList.size() >= MAX_SIZE_HISTORY) {
-                historyList.remove(0);
-            }
-            historyList.add(task);
+        if (task == null)
+            return;
+
+        if (historyList.size() >= MAX_SIZE_HISTORY) {
+            historyList.remove(0);
         }
+        historyList.add(task);
+
     }
 
     @Override
