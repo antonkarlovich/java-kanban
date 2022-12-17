@@ -12,8 +12,6 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
-        InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-
 
         Task task1 = new Task("task1", "купить афобазол, а то с этими дедлайнами скоро кукуха поедет)", Status.NEW);
         taskManager.addNewTask(task1);

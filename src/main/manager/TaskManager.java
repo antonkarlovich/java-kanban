@@ -6,8 +6,7 @@ import main.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface TaskManager { //исправился) я просто где то читал, что надо 2 строчки между методами,
-    //поэтому стрательно нажимал на enter:D
+public interface TaskManager {
 
     void addNewTask(Task task);
 
