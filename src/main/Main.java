@@ -57,7 +57,9 @@ public class Main {
 
         System.out.println("Выводим все сабтаски: " + taskManager.getAllSubtasks());
 
-
+        System.out.println(taskManager.getHistory());
+        System.out.println("Удаляю задачу");
+        taskManager.deleteTaskById(4);
         System.out.println(epicForRepair.getSubTaskIds());
 
         System.out.println("Выводим историю просмотров:");
