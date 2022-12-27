@@ -21,7 +21,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        removeNode(historyMap.get(task.getId()));//с этими методами не разобрался(
+        removeNode(historyMap.remove(task.getId()));
         linkLast(task);
         historyMap.put(task.getId(), tail);
     }

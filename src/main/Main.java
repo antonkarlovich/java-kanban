@@ -63,9 +63,27 @@ public class Main {
         System.out.println(epicForRepair.getSubTaskIds());
 
         System.out.println("Выводим историю просмотров:");
-        List<Task> history = taskManager.getHistory();
-        for (int i = 0; i < history.size(); i++) {
-            System.out.println((i + 1) + "." + history.get(i));
+        List<Task> history1 = taskManager.getHistory();
+        for (int i = 0; i < history1.size(); i++) {
+            System.out.println((i + 1) + "." + history1.get(i));
+        }
+
+        System.out.println("Удаляю все сабтаски");
+        taskManager.deleteAllSubTasks();
+
+
+        System.out.println("Выводим историю просмотров:");
+        List<Task> history2 = taskManager.getHistory();
+        for (int i = 0; i < history2.size(); i++) {
+            System.out.println((i + 1) + "." + history2.get(i));
+        }
+
+        taskManager.deleteAllTasks();
+
+        System.out.println("Выводим историю просмотров:");
+        List<Task> history3 = taskManager.getHistory();
+        for (int i = 0; i < history3.size(); i++) {
+            System.out.println((i + 1) + "." + history3.get(i));
         }
     }
 }
