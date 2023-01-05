@@ -1,89 +1,46 @@
 package main;
 
-import main.manager.InMemoryHistoryManager;
+import main.manager.FileBackedTasksManager;
 import main.manager.Managers;
 import main.manager.TaskManager;
 import main.tasks.Status;
 import main.tasks.*;
+import java.io.File;
 
-import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
 
-        Task task1 = new Task("task1", "купить афобазол, а то с этими дедлайнами скоро кукуха поедет)", Status.NEW);
+        Task task1 = new Task("task1", "купить афобазол", Status.NEW);
         taskManager.addNewTask(task1);
 
 
+
+
+        Subtask subTask1 = new Subtask("subTask1", "ободрать старые обои", Status.NEW);
+        taskManager.addNewSubtask(subTask1);
+
+        Subtask subTask2 = new Subtask("subTask2", "subTask2", Status.NEW);
+        taskManager.addNewSubtask(subTask2);
+
         Epic epicForRepair = new Epic("Epic1", "\"Сделать ремонт в зале\"");
+        epicForRepair.addSubtasksId(subTask1.getId());
+        epicForRepair.addSubtasksId(subTask2.getId());
         taskManager.addNewEpic(epicForRepair);
 
-        SubTask subTask1 = new SubTask("subTask1", "ободрать старые обои", Status.NEW, epicForRepair.getId());
-        taskManager.addSubTask(subTask1);
-        SubTask subTask2 = new SubTask("subTask2", "узнать, можно ли снести стену", Status.NEW, epicForRepair.getId());
-        taskManager.addSubTask(subTask2);
+        taskManager.getTask(1);
+        taskManager.getTask(2);
+        taskManager.getTask(3);
+        taskManager.getEpic(4);
 
-        System.out.println("все сабтаски эпика " + taskManager.getAllSubTaskForEpic(epicForRepair.getId()));
-
-
-        System.out.println("---------------------------------------------------------------------------------------");
-
-        System.out.println(epicForRepair.getStatus());
-        System.out.println(epicForRepair.getId());
-
-
-        System.out.println("Вывожу задачу по id");
-        System.out.println(taskManager.getTaskById(1));
-
-        System.out.println(taskManager.getSubTaskById(3));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-        System.out.println(taskManager.getSubTaskById(4));
-
-
-        SubTask newSubTask1 = new SubTask("подзадача 1", "обновленная задача", Status.IN_PROGRESS, epicForRepair.getId());
-        taskManager.updateSubTask(newSubTask1);
-
-        System.out.println("---------------------------------------------------------------------------------------");
-
-        System.out.println("Выводим все сабтаски: " + taskManager.getAllSubtasks());
-
+        System.out.println("Выводим историю просмотров:");
         System.out.println(taskManager.getHistory());
-        System.out.println("Удаляю задачу");
-        taskManager.deleteTaskById(4);
-        System.out.println(epicForRepair.getSubTaskIds());
 
-        System.out.println("Выводим историю просмотров:");
-        List<Task> history1 = taskManager.getHistory();
-        for (int i = 0; i < history1.size(); i++) {
-            System.out.println((i + 1) + "." + history1.get(i));
-        }
-
-        System.out.println("Удаляю все сабтаски");
-        taskManager.deleteAllSubTasks();
+        TaskManager taskManager1 = FileBackedTasksManager.loadFromFile(new File("src/files/history.csv"));
+        System.out.println("получаем задачи из файла" + taskManager1.getHistory());
 
 
-        System.out.println("Выводим историю просмотров:");
-        List<Task> history2 = taskManager.getHistory();
-        for (int i = 0; i < history2.size(); i++) {
-            System.out.println((i + 1) + "." + history2.get(i));
-        }
-
-        taskManager.deleteAllTasks();
-
-        System.out.println("Выводим историю просмотров:");
-        List<Task> history3 = taskManager.getHistory();
-        for (int i = 0; i < history3.size(); i++) {
-            System.out.println((i + 1) + "." + history3.get(i));
-        }
     }
 }
