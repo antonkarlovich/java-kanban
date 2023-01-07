@@ -8,26 +8,24 @@ import main.tasks.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class FileBackedTasksManager extends InMemoryTaskManager {
-    final private String historyFile;
+public class FileBackedTasksManager extends InMemoryTaskManager{
+    final private String file;
     final String path = "src/files/";
 
     public FileBackedTasksManager(String file) {
-        historyFile = file;
+        this.file = file;
     }
 
-    private void save() throws ManagerSaveException {
+    private void save() {//понял) просто я сначала собирал всю конструкцию, блока catch не было, поэтому идея ругалась)
+        //а удалить потом забыл
         try{
             Files.createDirectory(Paths.get(path));
         } catch (Exception e) {
             e.getStackTrace();
         }
-        try(Writer writer = new FileWriter(historyFile)) {
+        try(Writer writer = new FileWriter(file)) {
             writer.write("id,type,name,status,description,epic\n");
             for (Task task: tasksMap.values()) {
                 writer.write(task.toString() + "\n");
@@ -43,25 +41,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.getStackTrace();
-            throw new ManagerSaveException("Ошибка записи!");
+            throw new ManagerSaveException("Ошибка записи в файл " + file);
         }
     }
 
     private static Task taskFromString(String taskString) {
         String[] fields = taskString.split(",");
+        final int id = Integer.parseInt(fields[0]);
+        final String type = fields[1];
+        final String name = fields[2];
+        final Status status = Status.valueOf(fields[3]);
+        final String desc = fields[4];
+
         Task task;
-        switch (fields[1]) {
+        switch (type) {
             case "TASK":
-                task = new Task(fields[2], fields[4], Status.valueOf(fields[3]));
+                task = new Task(name, desc, status);
                 task.setId(Integer.parseInt(fields[0]));
                 break;
             case "SUBTASK":
-                task = new Subtask(fields[2], fields[4], Status.valueOf(fields[3]), Integer.parseInt(fields[5]));
-                task.setId(Integer.parseInt(fields[0]));
+                task = new Subtask(name, desc, status, Integer.parseInt(fields[5]));
+                task.setId(id);
                 break;
             case "EPIC":
-                task = new Epic(fields[2], fields[4]);
-                task.setId(Integer.parseInt(fields[0]));
+                task = new Epic(name, desc, status);
+                task.setId(id);
                 break;
             default:
                 task = null;
@@ -107,7 +111,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String[] blocks = fileString.split("\n\n");
             String[] tasksStrings = blocks[0].split("\n");
             List <Integer> historyIds = historyFromString(blocks[1].trim());
-            Map<Integer, List<Integer>> subtasksToEpic = new HashMap<>();
+            Map <Integer, List<Integer>> subtasksToEpic = new HashMap<>();
 
             for (int i = 1; i < tasksStrings.length; i++) {
                 String type = tasksStrings[i].split(",")[1];
@@ -138,19 +142,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         fileBackedTasksManager.addNewEpic(epic);
                         break;
                     default:
-                        System.out.println("Что-то пошло не так...и задача из файла не создалась!!!");
+                        System.out.println("Не удалось создать задачу из файла");
                 }
             }
 
-            for (Integer id : historyIds) {
+            for (Integer id : historyIds) { //c исправлением на счет добавления в историю не разобрался(  реализовал
+                //вот так (закомменченый код) но там NPE получается
                 fileBackedTasksManager.getTask(id);
                 fileBackedTasksManager.getSubtask(id);
                 fileBackedTasksManager.getEpic(id);
+                //fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getTask(id));
+                //fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getSubtask(id));
+                //fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getEpic(id));
             }
-        } catch (ManagerSaveException e) {  // Вот тут не совсем понял, Reader требует отлавливать IOException
-            System.out.println(e.getMessage());
         } catch (IOException e) {
-            return fileBackedTasksManager;
+            throw new ManagerSaveException("Ошибка при чтении файла " + file);
         }
 
         return fileBackedTasksManager;

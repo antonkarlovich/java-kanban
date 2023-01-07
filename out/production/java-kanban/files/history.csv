@@ -1,0 +1,7 @@
+id,type,name,status,description,epic
+1,TASK,task1,NEW,купить афобазол
+2,SUBTASK,subTask1,NEW,ободрать старые обои,4
+3,SUBTASK,subTask2,NEW,subTask2,4
+4,EPIC,Epic1,NEW,"Сделать ремонт в зале",
+
+1,4
