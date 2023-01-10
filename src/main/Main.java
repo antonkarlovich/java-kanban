@@ -17,8 +17,6 @@ public class Main {
         taskManager.addNewTask(task1);
 
 
-
-
         Subtask subTask1 = new Subtask("subTask1", "ободрать старые обои", Status.NEW);
         taskManager.addNewSubtask(subTask1);
 
@@ -38,7 +36,7 @@ public class Main {
         System.out.println("Выводим историю просмотров:");
         System.out.println(taskManager.getHistory());
 
-        TaskManager taskManager1 = FileBackedTasksManager.loadFromFile(new File("src/files/history.csv"));
+        TaskManager taskManager1 = FileBackedTasksManager.loadFromFile(new File("src/files/files.csv"));
         System.out.println("получаем задачи из файла" + taskManager1.getHistory());
 
 

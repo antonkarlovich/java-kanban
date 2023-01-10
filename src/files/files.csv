@@ -4,4 +4,4 @@ id,type,name,status,description,epic
 3,SUBTASK,subTask2,NEW,subTask2,4
 4,EPIC,Epic1,NEW,"Сделать ремонт в зале",
 
-1,1,1,1,4
+1,1,4

@@ -3,7 +3,7 @@ package main.manager;
 public class Managers {
 
     public static TaskManager getDefault() {
-        return new FileBackedTasksManager("src/files/history.csv");
+        return new FileBackedTasksManager("src/files/files.csv");
     }
 
 

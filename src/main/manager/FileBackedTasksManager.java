@@ -39,8 +39,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
             writer.write("\n");
             writer.write(historyToString(historyManager));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.getStackTrace();
             throw new ManagerSaveException("Ошибка записи в файл " + file);
         }
     }
@@ -57,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         switch (type) {
             case "TASK":
                 task = new Task(name, desc, status);
-                task.setId(Integer.parseInt(fields[0]));
+                task.setId(id);
                 break;
             case "SUBTASK":
                 task = new Subtask(name, desc, status, Integer.parseInt(fields[5]));
@@ -115,45 +113,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
             for (int i = 1; i < tasksStrings.length; i++) {
                 String type = tasksStrings[i].split(",")[1];
+                Task task = taskFromString(tasksStrings[i]);
                 switch (type) {
                     case "TASK":
-                        fileBackedTasksManager.addNewTask(taskFromString(tasksStrings[i]));
+                        fileBackedTasksManager.tasksMap.put(task.getId(), task);
                         break;
                     case "SUBTASK":
-                        Subtask subtask = (Subtask) taskFromString(tasksStrings[i]);
-                        List<Integer> subtasks = subtasksToEpic.getOrDefault(subtask.getEpicID(), null);
-                        if (subtasks != null) {
-                            subtasks.add(subtask.getId());
-                        } else {
-                            subtasks = new ArrayList<>();
-                            subtasks.add(subtask.getId());
-                        }
-                        subtasksToEpic.put(subtask.getEpicID(), subtasks);
-                        fileBackedTasksManager.addNewSubtask(subtask);
+                        fileBackedTasksManager.subTasksMap.put(task.getId(), (Subtask) task);
                         break;
                     case "EPIC":
-                        Epic epic = (Epic) taskFromString(tasksStrings[i]);
-                        List<Integer> subtasksList = subtasksToEpic.getOrDefault(epic.getId(), null);
-                        if (subtasksList != null) {
-                            for (Integer id : subtasksList) {
-                                epic.addSubtasksId(id);
-                            }
-                        }
-                        fileBackedTasksManager.addNewEpic(epic);
+                        fileBackedTasksManager.epicsMap.put(task.getId(), (Epic) task);
                         break;
                     default:
                         System.out.println("Не удалось создать задачу из файла");
                 }
             }
+            for (Subtask subtask : fileBackedTasksManager.subTasksMap.values()) {
+                if (subtask.getEpicID() != null) {
+                    fileBackedTasksManager.epicsMap.get(subtask.getEpicID()).addSubtasksId(subtask.getId());
+                }
+            }
 
-            for (Integer id : historyIds) { //c исправлением на счет добавления в историю не разобрался(  реализовал
-                //вот так (закомменченый код) но там NPE получается
-                fileBackedTasksManager.getTask(id);
-                fileBackedTasksManager.getSubtask(id);
-                fileBackedTasksManager.getEpic(id);
-                //fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getTask(id));
-                //fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getSubtask(id));
-                //fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getEpic(id));
+            for (Integer id : historyIds) {
+                fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getTask(id));
+                fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getSubtask(id));
+                fileBackedTasksManager.historyManager.add(fileBackedTasksManager.getEpic(id));
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении файла " + file);
